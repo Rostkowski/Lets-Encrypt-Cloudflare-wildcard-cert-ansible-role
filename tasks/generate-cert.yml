@@ -19,7 +19,7 @@
 
 - name: "Copy certbot dns hook"
   copy:
-    src: "/etc/ansible/roles/certificate_generation/files/certbot-dns-hook.sh"
+    src: "{{ certbot_dns_hook_path }}"
     dest: "/etc/certificate_generation/certbot-dns-hook.sh"
     mode: "u=rwx,g=r,o=r"
 
