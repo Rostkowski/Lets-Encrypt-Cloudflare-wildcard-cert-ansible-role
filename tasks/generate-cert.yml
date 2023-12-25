@@ -1,0 +1,38 @@
+---
+- name: "Install certbot"
+  apt:
+    name: certbot
+    state: latest
+    update_cache: yes
+
+- name: "Install jq dependency for shell script"
+  apt:
+    name: jq
+    state: latest
+    update_cache: yes
+
+- name: "Create a directory to store shell script to generate certificate"
+  ansible.builtin.file:
+    path: "/etc/certificate_generation"
+    state: "directory"
+    mode: "0755"
+
+- name: "Copy certbot dns hook"
+  copy:
+    src: "/etc/ansible/roles/certificate_generation/files/certbot-dns-hook.sh"
+    dest: "/etc/certificate_generation/certbot-dns-hook.sh"
+    mode: "u=rwx,g=r,o=r"
+
+- name: "Generate wildcard certificates"
+  shell: 'certbot certonly \
+    --manual \
+    --preferred-challenges=dns \
+    --email={{ domain_admin_email }} \
+    --agree-tos \
+    --domains {{ hosted_domains|default("absent")|selectattr("state", "equalto", "present")|map(attribute="domain")|join(",") }} \
+    --keep-until-expiring \
+    --force-renewal \
+    --non-interactive \
+    --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }}" \
+    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }}" \
+    --dry-run' 

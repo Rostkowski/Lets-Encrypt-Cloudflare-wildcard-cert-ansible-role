@@ -1,0 +1,11 @@
+---
+# defaults file for certificate_generation
+hosted_domains: 
+  - domain: "example1.com"
+    state: "present"
+  - domain: "example2.com"
+    state: "absent"
+
+api_key: ""
+
+domain_admin_email: ""

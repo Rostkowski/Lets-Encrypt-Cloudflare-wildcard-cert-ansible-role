@@ -1,0 +1,22 @@
+<VirtualHost *:80>
+    ServerName {{ item.url }}
+    ServerAlias www.{{ item.url }}
+            
+    ServerSignature Off
+    SSLEngine Off
+    RewriteEngine On
+    Redirect / https://{{ item.url }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ item.url }}
+    ServerAlias www.{{ item.url }}
+            
+    ServerSignature Off
+    RewriteEngine On
+    DocumentRoot /var/www/html/{{ item.folder_path }}
+    SSLEngine On
+    SSLCertificateFile /etc/letsencrypt/live/{{ item.cert_path:x }}/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/{environment}/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>

@@ -1,0 +1,3 @@
+---
+# tasks file for certificate_generation
+- include_tasks: generate-cert.yml
