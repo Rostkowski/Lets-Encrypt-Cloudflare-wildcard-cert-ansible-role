@@ -25,14 +25,15 @@
 
 - name: "Generate wildcard certificates"
   vars:
+    - prefix: "*."
     - list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
-    - list_of_present_domains_with_wildcard: '{{ list_of_present_domains + list_of_present_domains|map('regex_replace', '^(.*)$', '*.$1')|list}}'
+    - list_of_present_domains_with_wildcard: '{{ [prefix]|product(list_of_present_domains)|map('join')|list }}'
   shell: 'certbot certonly \
     --manual \
     --preferred-challenges=dns \
     --email={{ domain_admin_email }} \
     --agree-tos \
-    --domains {{ list_of_present_domains_with_wildcard|join(",") }} \
+    --domains {{ list_of_present_domains + list_of_present_domains_with_wildcard|join(",") }} \
     --keep-until-expiring \
     --force-renewal \
     --non-interactive \
