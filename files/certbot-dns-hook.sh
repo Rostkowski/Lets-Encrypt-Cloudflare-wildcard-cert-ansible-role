@@ -50,7 +50,7 @@ case $1 in
 	  "type": "TXT"
   }')
 	echo -n "${response}"
-	sleep 30
+	sleep 10
 	;;
     "remove_record")
 	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"

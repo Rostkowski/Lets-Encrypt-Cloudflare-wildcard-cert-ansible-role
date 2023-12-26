@@ -10,4 +10,4 @@ api_key: ""
 
 domain_admin_email: ""
 
-certbot_dns_hook_path: "/etc/ansible/roles/certificate_generation/files/certbot-dns-hook.sh"
+certbot_dns_hook_path: "/etc/ansible/roles/Lets_Encrypt_Cloudflare_Cert_Generation_Role/files/certbot-dns-hook.sh"
