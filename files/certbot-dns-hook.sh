@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Some of the code taken from 
+# Some of the code taken from
 # https://github.com/systemli/ansible-role-letsencrypt
 
 # Script will exit if any command fails
@@ -29,41 +29,53 @@ fi
 
 # Wildcard support: remove `^*.' from $CERTBOT_DOMAIN
 CERTBOT_DOMAIN="${CERTBOT_DOMAIN#\*\.}"
+CLOUDFLARE_API_TOKEN="${2}"
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
-	--url "https://api.cloudflare.com/client/v4/zones?name=${CERTBOT_DOMAIN}" \
-	--header 'Content-Type: application/json' \
-	--header "Authorization: Bearer ${2}" \
-	| jq -r '.result[0].id')
+    --url "https://api.cloudflare.com/client/v4/zones?name=${CERTBOT_DOMAIN}" \
+    --header 'Content-Type: application/json' \
+    --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+| jq -r '.result[0].id')
 
-case $1 in 
-    "create_record")
-	url="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records"
-	response=$(curl --silent --show-error --request POST \
-	  --url $url \
-	  --header 'Content-Type: application/json' \
-	  --header "Authorization: Bearer ${2}" \
-	  --data '{
+function create_record() {
+    url="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records"
+    response=$(curl --silent --show-error --request POST \
+        --url $url \
+        --header 'Content-Type: application/json' \
+        --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+        --data '{
 	  "content": "'${CERTBOT_VALIDATION}'",
 	  "name": "_acme-challenge",
 	  "type": "TXT"
-  }')
-	echo -n "${response}"
-	sleep 10
-	;;
+    }')
+}
+
+
+function remove_records() {
+    certbot_records="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"
+    records=$(curl --silent --show-error --request GET \
+        --url $url_get_record_id \
+        --header 'Content-Type: application/json' \
+        --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    | jq -r '.result[]')
+    
+    for record in $records; do
+        url_delete_record="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${record.id}"
+        response=$(curl --silent --show-error --request DELETE \
+            --url $url_delete_record \
+            --header 'Content-Type: application/json' \
+        --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")
+    done
+}
+
+case $1 in
+    "create_record")
+        remove_records
+        create_record
+        sleep 10
+    ;;
     "remove_record")
-	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"
-	record_id=$(curl --silent --show-error --request GET \
-	  --url $url_get_record_id \
-	  --header 'Content-Type: application/json' \
-	  --header "Authorization: Bearer ${2}" \
-	  | jq -r '.result[0].id')
-	
-	url_delete_record="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${record_id}"
-	response=$(curl --silent --show-error --request DELETE \
-	  --url $url_delete_record \
-	  --header 'Content-Type: application/json' \
-	  --header "Authorization: Bearer ${2}")
-	;;
+        remove_records
+    ;;
 esac
