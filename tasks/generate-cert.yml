@@ -26,7 +26,7 @@
 - name: "Generate wildcard certificates"
   vars:
     - list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
-    - list_of_present_domains_with_wildcard: '{{ list_of_present_domains + [*.]|product(list_of_present_domains)|join(",")}}'
+    - list_of_present_domains_with_wildcard: '{{ list_of_present_domains + list_of_present_domains|map("regex_replace", "^(.*)$", "*.$1")|list}}'
   shell: 'certbot certonly \
     --manual \
     --preferred-challenges=dns \
