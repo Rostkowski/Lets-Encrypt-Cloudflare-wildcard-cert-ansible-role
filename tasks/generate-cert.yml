@@ -33,7 +33,7 @@
     --preferred-challenges=dns \
     --email={{ domain_admin_email }} \
     --agree-tos \
-    --domains {{ list_of_present_domains + list_of_present_domains_with_wildcard|join(",") }} \
+    --domains {{ list_of_present_domains|list + list_of_present_domains_with_wildcard|list|join(",") }} \
     --keep-until-expiring \
     --force-renewal \
     --non-interactive \
