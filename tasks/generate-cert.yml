@@ -27,7 +27,7 @@
   vars:
     - prefix: "*."
     - list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
-    - list_of_present_domains_with_wildcard: '{{ [prefix]|product(list_of_present_domains)|map('join')|list }}'
+    - list_of_present_domains_with_wildcard: '{{ [prefix]|product(list_of_present_domains)|map("join")|list }}'
   shell: 'certbot certonly \
     --manual \
     --preferred-challenges=dns \
