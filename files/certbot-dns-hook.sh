@@ -51,7 +51,6 @@ function create_record() {
     }')
 }
 
-
 function remove_records() {
     certbot_records="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"
     records=$(curl --silent --show-error --request GET \
@@ -59,6 +58,8 @@ function remove_records() {
         --header 'Content-Type: application/json' \
         --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
     | jq -r '.result[]')
+
+		echo $records
     
     for record in $records; do
         url_delete_record="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${record.id}"
