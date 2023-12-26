@@ -61,7 +61,7 @@ function remove_records() {
 
 		echo $records
     
-    for record in $records; do
+    for record in "${records[@]}"; do
         url_delete_record="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${record.id}"
         response=$(curl --silent --show-error --request DELETE \
             --url $url_delete_record \
