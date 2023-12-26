@@ -24,7 +24,7 @@
     mode: "u=rwx,g=r,o=r"
 
 - name: "Generate wildcard certificates"
-  var:
+  vars:
     - list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
     - list_of_present_domains_with_wildcard: '{{ list_of_present_domains + *.|product(list_of_present_domains)|join(",")}}'
   shell: 'certbot certonly \
