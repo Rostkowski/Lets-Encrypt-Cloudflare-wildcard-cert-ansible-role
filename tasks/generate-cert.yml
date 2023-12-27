@@ -38,4 +38,4 @@
     --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }}" \
     --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }}" \
     --cert-name {{ item }}'
-  loop: {{ list_of_present_domains }}
+  loop: "{{ list_of_present_domains }}"
