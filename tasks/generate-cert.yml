@@ -39,5 +39,5 @@
     --force-renewal \
     --non-interactive \
     --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }}" \
-    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }} \
-    --cert-name {{ cert_name }}"' 
+    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }}" \
+    --cert-name {{ cert_name }}' 
