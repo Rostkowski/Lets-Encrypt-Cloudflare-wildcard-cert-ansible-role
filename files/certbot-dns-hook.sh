@@ -28,7 +28,7 @@ if [ -z "${2}" ]; then
 fi
 
 # Support to get the root domain from a subdomain
-CERTBOT_DOMAIN="${CERTBOT_DOMAIN#\^(.*\.)[^.]+\..*$\\}"
+CERTBOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g' | sed -r 's/[a-zA-Z0-9]+.//')"
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
