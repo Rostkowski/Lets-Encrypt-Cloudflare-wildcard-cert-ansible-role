@@ -31,6 +31,8 @@ fi
 ROOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g' | sed -r 's/[a-zA-Z0-9]+.//')"
 CERTBOT_VERIFICATION_DOMAIN_NAME="$(echo "_acme-challenge.${CERTBOT_DOMAIN}" | sed -r "s/.${ROOT_DOMAIN}//g")"
 
+echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_VERIFICATION_DOMAIN_NAME}"
+
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
 	--url "https://api.cloudflare.com/client/v4/zones?name=${ROOT_DOMAIN}" \
