@@ -33,7 +33,7 @@ CERTBOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g')"
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
-	--url "https://api.cloudflare.com/client/v4/zones?name=${CERTBOT_DOMAIN}" \
+	--url "https://api.cloudflare.com/client/v4/zones?name=${ROOT_DOMAIN}" \
 	--header 'Content-Type: application/json' \
 	--header "Authorization: Bearer ${2}" \
 	| jq -r '.result[0].id')
