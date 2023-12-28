@@ -29,8 +29,7 @@ fi
 
 # Support to get the root domain from a subdomain
 ROOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g' | sed -r 's/[a-zA-Z0-9]+.//')"
-CERTBOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g')"
-CERTBOT_VERIFICATION_DOMAIN_NAME="$(echo "_acme-challenge.${CERTBOT_DOMAIN}" | sed -r 's/."${ROOT_DOMAIN}"//')"
+CERTBOT_VERIFICATION_DOMAIN_NAME="$(echo "_acme-challenge.${CERTBOT_DOMAIN}" | sed -r 's/\."${ROOT_DOMAIN}"//g')"
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
