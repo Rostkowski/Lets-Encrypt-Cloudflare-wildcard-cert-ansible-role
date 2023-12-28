@@ -38,7 +38,7 @@ ZONE_ID=$(curl --silent --show-error --request GET \
 	--header "Authorization: Bearer ${2}" \
 	| jq -r '.result[0].id')
 
-echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_VERIFICATION_DOMAIN_NAME ${ZONE_ID}"
+echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_VERIFICATION_DOMAIN_NAME} ${ZONE_ID}"
 
 case $1 in 
     "create_record")
