@@ -27,8 +27,8 @@ if [ -z "${2}" ]; then
     exit 1
 fi
 
-# Wildcard support: remove `^*.' from $CERTBOT_DOMAIN
-CERTBOT_DOMAIN="${CERTBOT_DOMAIN#\*\.}"
+# Support to get the root domain from a subdomain
+CERTBOT_DOMAIN="${CERTBOT_DOMAIN#\^(.*\.)[^.]+\..*$\\}"
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
