@@ -49,7 +49,7 @@ case $1 in
 	  --header "Authorization: Bearer ${2}" \
 	  --data '{
 	  "content": "'${CERTBOT_VALIDATION}'",
-	  "name": "${CERTBOT_VERIFICATION_DOMAIN_NAME}",
+	  "name": "'${CERTBOT_VERIFICATION_DOMAIN_NAME}'",
 	  "type": "TXT"
   }')
 	echo -n "${response}"
