@@ -31,13 +31,11 @@
     - complete_list_of_domains: '{{ list_of_present_domains + list_of_present_domains_with_wildcard }}'
   shell: 'certbot certonly \
     --manual \
+    --cert-name {{ cert_name }} \
     --preferred-challenges=dns \
     --email={{ domain_admin_email }} \
     --agree-tos \
     --domains {{ complete_list_of_domains|join(",") }} \
-    --expand \
-    --force-renewal \
     --non-interactive \
     --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }}" \
-    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }}" \
-    --cert-name {{ cert_name }}' 
+    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }}"' 
