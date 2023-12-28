@@ -35,7 +35,6 @@
     --email={{ domain_admin_email }} \
     --agree-tos \
     --domains {{ complete_list_of_domains|join(",") }} \
-    --keep-until-expiring \
     --force-renewal \
     --non-interactive \
     --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }}" \
