@@ -25,10 +25,10 @@
 
 - name: "Generate certificate"
   vars:
-    - prefix: "www."
-    - list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
-    - list_of_present_domains_with_wildcard: '{{ [prefix]|product(list_of_present_domains)|map("join")|list }}'
-    - complete_list_of_domains: '{{ list_of_present_domains + list_of_present_domains_with_wildcard }}'
+    prefix: "www."
+    list_of_present_domains: '{{ hosted_domains|selectattr("state", "equalto", "present")|map(attribute="domain")|list }}'
+    list_of_present_domains_with_wildcard: '{{ [prefix]|product(list_of_present_domains)|map("join")|list }}'
+    complete_list_of_domains: '{{ list_of_present_domains + list_of_present_domains_with_wildcard }}'
   shell: 'certbot certonly \
     --manual \
     --cert-name {{ cert_name }} \
