@@ -3,6 +3,8 @@
 # Some of the code taken from 
 # https://github.com/systemli/ansible-role-letsencrypt
 
+# Known issue: Supported only 1 level of subdomain
+
 # Script will exit if any command fails
 set -e
 
