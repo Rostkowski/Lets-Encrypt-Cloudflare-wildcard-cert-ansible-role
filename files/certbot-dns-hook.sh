@@ -30,8 +30,7 @@ if [ -z "${2}" ]; then
 fi
 
 # Support to get the root domain from a subdomain
-ROOT_DOMAIN="$(echo "${CERTBOT_DOMAIN}" | sed -r 's/www.//g' | sed -r 's/[a-zA-Z0-9]+.//')"
-CERTBOT_VERIFICATION_DOMAIN_PREFIX="$(echo "_acme-challenge.${CERTBOT_DOMAIN}" | sed -r "s/.${ROOT_DOMAIN}//g")"
+ROOT_DOMAIN=$(expr match "$CERTBOT_DOMAIN" '.*\.\(.*\..*\)')
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
@@ -40,7 +39,7 @@ ZONE_ID=$(curl --silent --show-error --request GET \
 	--header "Authorization: Bearer ${2}" \
 	| jq -r '.result[0].id')
 
-echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_VERIFICATION_DOMAIN_PREFIX} ${ZONE_ID}"
+echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_DOMAIN} ${ZONE_ID}"
 
 case $1 in 
     "create_record")
@@ -51,14 +50,13 @@ case $1 in
 	  --header "Authorization: Bearer ${2}" \
 	  --data '{
 	  "content": "'${CERTBOT_VALIDATION}'",
-	  "name": "'${CERTBOT_VERIFICATION_DOMAIN_PREFIX}'",
+	  "name": "'${CERTBOT_DOMAIN}'",
 	  "type": "TXT"
   }')
-	echo -n "${response}"
 	sleep 10
 	;;
     "remove_record")
-	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${CERTBOT_VERIFICATION_DOMAIN_PREFIX}.${ROOT_DOMAIN}"
+	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"
 	record_id=$(curl --silent --show-error --request GET \
 	  --url $url_get_record_id \
 	  --header 'Content-Type: application/json' \
