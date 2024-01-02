@@ -30,7 +30,7 @@ if [ -z "${2}" ]; then
 fi
 
 # Support to get the root domain from a subdomain
-ROOT_DOMAIN=$(echo ${CERTBOT_DOMAIN} | sed -E '/s www.//g')
+ROOT_DOMAIN=$(echo ${CERTBOT_DOMAIN} | sed -E 's/www.//g')
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
