@@ -26,8 +26,8 @@
 - name: "Generate certificate"
   vars:
     prefix_www: "www."
-    list_of_present_root_domains: '{{ hosted_domains | selectattr("state", "equalto", "present") | map(attribute="domain") | list }}'
-    list_of_present_root_domains_with_www: '{{ [prefix_www] | selectattr("state", "equalto", "present") | map("join") | list }}'
+    list_of_present_root_domains: '{{ hosted_domains | selectattr("state", "equalto", "present") | selectattr("domain_type", "equalto", "root") | map(attribute="domain") | list }}'
+    list_of_present_root_domains_with_www: '{{ [prefix_www] | product(hosted_domains) | map("join") | list }}'
     complete_list_of_domains: '{{ list_of_present_root_domains + list_of_present_root_domains_with_www }}'
   shell: 'certbot certonly \
     --manual \
