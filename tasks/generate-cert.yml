@@ -33,6 +33,7 @@
     --domains {{ item.full_url }},www.{{ item.full_url }} \
     --non-interactive \
     --manual-auth-hook="/etc/certificate_generation/certbot-dns-hook.sh create_record {{ api_key }} {{ item.core_domain }}" \
-    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }} {{ item.core_domain }}"'
+    --manual-cleanup-hook="/etc/certificate_generation/certbot-dns-hook.sh remove_record {{ api_key }} {{ item.core_domain }}" \
+    --dry-run'
   loop: "{{ hosted_domains | selectattr('state', 'equalto', 'present') | list }}"
   
