@@ -59,7 +59,7 @@ case $1 in
 	sleep 25
 	;;
     "remove_record")
-	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${ACME_CHALLENGE}.${3}"
+	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${ACME_CHALLENGE}"
 	record_id=$(curl --silent --show-error --request GET \
 	  --url $url_get_record_id \
 	  --header 'Content-Type: application/json' \
