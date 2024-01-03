@@ -55,7 +55,7 @@ case $1 in
 	  "content": "'${CERTBOT_VALIDATION}'",
 	  "name": "'${ACME_CHALLENGE}'",
 	  "type": "TXT"
-  }'| jr -r '.result.id')
+  }'| jq -r '.result.id')
 
 	if [ ! -d /tmp/CERTBOT_$CERTBOT_DOMAIN ];then
         mkdir -m 0700 /tmp/CERTBOT_$CERTBOT_DOMAIN
