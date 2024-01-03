@@ -33,7 +33,7 @@ if [ -z "${3}" ]; then
     exit 1
 fi
 
-ACME_CHALLENGE=$(echo "_acme_challenge.${CERTBOT_DOMAIN}" | sed -e "s/.${3}//")
+ACME_CHALLENGE=$(echo "_acme-challenge.${CERTBOT_DOMAIN}" | sed -e "s/.${3}//")
 
 echo "ACME_CHALLENGE: ${ACME_CHALLENGE}"
 
@@ -62,6 +62,7 @@ case $1 in
 	fi
 	echo $ZONE_ID > /tmp/CERTBOT_$CERTBOT_DOMAIN/ZONE_ID
 	echo $RECORD_ID > /tmp/CERTBOT_$CERTBOT_DOMAIN/RECORD_ID
+
 	sleep 25
 	;;
     "remove_record")
