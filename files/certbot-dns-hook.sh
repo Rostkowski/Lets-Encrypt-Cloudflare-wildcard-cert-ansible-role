@@ -35,6 +35,8 @@ fi
 
 ACME_CHALLENGE=$(echo ${CERTBOT_DOMAIN} | sed -e "s/.${3}//")
 
+echo "ACME_CHALLENGE: ${ACME_CHALLENGE}"
+
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
 	--url "https://api.cloudflare.com/client/v4/zones?name=${3}" \
@@ -54,7 +56,7 @@ case $1 in
 	  "name": "'${ACME_CHALLENGE}'",
 	  "type": "TXT"
   }')
-	sleep 10
+	sleep 25
 	;;
     "remove_record")
 	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${ACME_CHALLENGE}.${3}"
