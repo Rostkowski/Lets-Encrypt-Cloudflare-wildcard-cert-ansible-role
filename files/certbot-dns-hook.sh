@@ -3,8 +3,6 @@
 # Some of the code taken from 
 # https://github.com/systemli/ansible-role-letsencrypt
 
-# Known issue: Supported only 1 level of subdomain
-
 # Script will exit if any command fails
 set -e
 
@@ -29,17 +27,20 @@ if [ -z "${2}" ]; then
     exit 1
 fi
 
-# Support to get the root domain from a subdomain
-ROOT_DOMAIN=$(echo ${CERTBOT_DOMAIN} | sed -E 's/www.//g')
+# Sanity check: check if root domain was provided
+if [ -z "${3}" ]; then
+    echo "Error: you need to provide the root domain name"
+    exit 1
+fi
+
+ACME_CHALLENGE=$(echo ${CERTBOT_DOMAIN} | sed -e "s/.${3}//")
 
 # Get zone ID from domain name
 ZONE_ID=$(curl --silent --show-error --request GET \
-	--url "https://api.cloudflare.com/client/v4/zones?name=${ROOT_DOMAIN}" \
+	--url "https://api.cloudflare.com/client/v4/zones?name=${3}" \
 	--header 'Content-Type: application/json' \
 	--header "Authorization: Bearer ${2}" \
 	| jq -r '.result[0].id')
-
-echo "${ROOT_DOMAIN} ${CERTBOT_DOMAIN} ${CERTBOT_DOMAIN} ${ZONE_ID}"
 
 case $1 in 
     "create_record")
@@ -50,13 +51,13 @@ case $1 in
 	  --header "Authorization: Bearer ${2}" \
 	  --data '{
 	  "content": "'${CERTBOT_VALIDATION}'",
-	  "name": "'${CERTBOT_DOMAIN}'",
+	  "name": "'${ACME_CHALLENGE}'",
 	  "type": "TXT"
   }')
 	sleep 10
 	;;
     "remove_record")
-	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=_acme-challenge.${CERTBOT_DOMAIN}"
+	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${ACME_CHALLENGE}.${3}"
 	record_id=$(curl --silent --show-error --request GET \
 	  --url $url_get_record_id \
 	  --header 'Content-Type: application/json' \
