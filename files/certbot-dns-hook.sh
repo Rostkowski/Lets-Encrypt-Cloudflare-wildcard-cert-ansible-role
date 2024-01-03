@@ -33,7 +33,7 @@ if [ -z "${3}" ]; then
     exit 1
 fi
 
-ACME_CHALLENGE=$(echo ${CERTBOT_DOMAIN} | sed -e "s/.${3}//")
+ACME_CHALLENGE=$(echo "_acme_challenge.${CERTBOT_DOMAIN}" | sed -e "s/.${3}//")
 
 echo "ACME_CHALLENGE: ${ACME_CHALLENGE}"
 
