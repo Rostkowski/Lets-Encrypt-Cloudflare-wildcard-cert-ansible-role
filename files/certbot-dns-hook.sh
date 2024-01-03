@@ -47,7 +47,7 @@ ZONE_ID=$(curl --silent --show-error --request GET \
 case $1 in 
     "create_record")
 	url="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records"
-	response=$(curl --silent --show-error --request POST \
+	RECORD_ID=$(curl --silent --show-error --request POST \
 	  --url $url \
 	  --header 'Content-Type: application/json' \
 	  --header "Authorization: Bearer ${2}" \
@@ -55,21 +55,32 @@ case $1 in
 	  "content": "'${CERTBOT_VALIDATION}'",
 	  "name": "'${ACME_CHALLENGE}'",
 	  "type": "TXT"
-  }')
+  }'| jr -r '.result.id')
+
+	if [ ! -d /tmp/CERTBOT_$CERTBOT_DOMAIN ];then
+        mkdir -m 0700 /tmp/CERTBOT_$CERTBOT_DOMAIN
+	fi
+	echo $ZONE_ID > /tmp/CERTBOT_$CERTBOT_DOMAIN/ZONE_ID
+	echo $RECORD_ID > /tmp/CERTBOT_$CERTBOT_DOMAIN/RECORD_ID
 	sleep 25
 	;;
     "remove_record")
-	url_get_record_id="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?name=${ACME_CHALLENGE}"
-	record_id=$(curl --silent --show-error --request GET \
-	  --url $url_get_record_id \
-	  --header 'Content-Type: application/json' \
-	  --header "Authorization: Bearer ${2}" \
-	  | jq -r '.result[0].id')
-	
-	url_delete_record="https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${record_id}"
-	response=$(curl --silent --show-error --request DELETE \
-	  --url $url_delete_record \
-	  --header 'Content-Type: application/json' \
-	  --header "Authorization: Bearer ${2}")
+	if [ -f /tmp/CERTBOT_$CERTBOT_DOMAIN/ZONE_ID ]; then
+					ZONE_ID=$(cat /tmp/CERTBOT_$CERTBOT_DOMAIN/ZONE_ID)
+					rm -f /tmp/CERTBOT_$CERTBOT_DOMAIN/ZONE_ID
+	fi
+
+	if [ -f /tmp/CERTBOT_$CERTBOT_DOMAIN/RECORD_ID ]; then
+					RECORD_ID=$(cat /tmp/CERTBOT_$CERTBOT_DOMAIN/RECORD_ID)
+					rm -f /tmp/CERTBOT_$CERTBOT_DOMAIN/RECORD_ID
+	fi
+	if [ -n "${ZONE_ID}" ]; then
+    if [ -n "${RECORD_ID}" ]; then
+			curl --silent --show-error --request DELETE \
+					--url "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}"\
+					--header 'Content-Type: application/json' \
+					--header "Authorization: Bearer ${2}"
+		fi
+	fi
 	;;
 esac
